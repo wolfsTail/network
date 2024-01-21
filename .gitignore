@@ -1,0 +1,7 @@
+*.sqlite3
+.vscode
+static
+.env
+env
+__pycache__
+.pylintrc
