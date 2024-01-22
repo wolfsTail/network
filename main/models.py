@@ -16,7 +16,7 @@ class Post(models.Model):
         verbose_name_plural = "Публикации"
     
     def __str__(self):
-        return f"{self.author} -> {self.title}"
+        return f"author: {self.author} -> post:{self.title}"
     
 
 
