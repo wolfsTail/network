@@ -32,15 +32,37 @@ class NestedPostListSerializer(serializers.ModelSerializer):
 
 
 class UserListSerializer(serializers.ModelSerializer):
+    is_friend = serializers.SerializerMethodField()
     class Meta:
         model = User
-        fields = ["username", "first_name", "last_name"]
+        fields = ["username", "first_name", "last_name", "is_friend"]
+
+    def get_is_friend(self, obj) -> bool:
+        curr_user = self.context["request"].user
+        return curr_user in obj.friends.all()
 
 
-class UserRetrieveSerializer(serializers.ModelSerializer):
-    is_friend = serializers.SerializerMethodField()
+class AbsUserRetrieveSerializer(serializers.ModelSerializer):    
     qty_of_friends = serializers.SerializerMethodField()
     posts = NestedPostListSerializer(many=True)
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "username", 
+            "first_name", 
+            "last_name", 
+            "email",            
+            "qty_of_friends",
+            "posts",
+            ]
+      
+    def get_qty_of_friends(self, obj) -> int:
+        return obj.friends.count()
+
+
+class UserRetrieveSerializer(AbsUserRetrieveSerializer):
+    is_friend = serializers.SerializerMethodField()
     class Meta:
         model = User
         fields = [
@@ -57,5 +79,6 @@ class UserRetrieveSerializer(serializers.ModelSerializer):
     def get_is_friend(self, obj) -> bool:
         return obj in self.context["request"].user.friends.all()
 
-    def get_qty_of_friends(self, obj) -> int:
-        return obj.friends.count()
+
+class UserProfileSerializer(AbsUserRetrieveSerializer):  
+    pass
