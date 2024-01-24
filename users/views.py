@@ -18,7 +18,9 @@ class UserListViewSet(
     ListModelMixin,
     RetrieveModelMixin, 
     GenericViewSet):
-    queryset = User.objects.all().order_by('-date_joined')    
+    queryset = User.objects.all().order_by('-date_joined')
+    lookup_field = 'id'
+
     def get_serializer_class(self):
         if self.action == 'create':
             return UserRegistrationSerializer
@@ -60,7 +62,15 @@ class UserListViewSet(
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
-
-
-
-
+    
+    @action(detail=True, methods=["post"], url_path="add-friend")
+    def add_friend(self, request, pk=None):
+        user = self.get_object()
+        request.user.friends.add(user)
+        return Response("Friend added")
+    
+    @action(detail=True, methods=["post"], url_path="remove-friend")
+    def remove_friend(self, request, pk=None):
+        user = self.get_object()
+        request.user.friends.remove(user)
+        return Response("Friend removed")

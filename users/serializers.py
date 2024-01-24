@@ -21,8 +21,8 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         return user
 
 
-class NestedPostListSerializer(serializers.ModelSerializer):
-    class Meta:
+class NestedPostListSerializer(serializers.ModelSerializer):    
+    class Meta:        
         model = Post
         fields = [             
             "title", 
@@ -42,9 +42,12 @@ class UserListSerializer(serializers.ModelSerializer):
         return curr_user in obj.friends.all()
 
 
-class AbsUserRetrieveSerializer(serializers.ModelSerializer):    
-    qty_of_friends = serializers.SerializerMethodField()
-    posts = NestedPostListSerializer(many=True)
+class BaseUserRetrieveSerializer(serializers.ModelSerializer):
+    """
+    Base serializer for Users profile and friends list
+    """    
+    qty_of_friends = serializers.SerializerMethodField(label="Кол-во друзей")
+    posts = NestedPostListSerializer(many=True, label="Публикации пользователя")
     class Meta:
         model = User
         fields = [
@@ -61,8 +64,8 @@ class AbsUserRetrieveSerializer(serializers.ModelSerializer):
         return obj.friends.count()
 
 
-class UserRetrieveSerializer(AbsUserRetrieveSerializer):
-    is_friend = serializers.SerializerMethodField()
+class UserRetrieveSerializer(BaseUserRetrieveSerializer):
+    is_friend = serializers.SerializerMethodField(label="Наш друг!")
     class Meta:
         model = User
         fields = [
@@ -80,5 +83,5 @@ class UserRetrieveSerializer(AbsUserRetrieveSerializer):
         return obj in self.context["request"].user.friends.all()
 
 
-class UserProfileSerializer(AbsUserRetrieveSerializer):  
+class UserProfileSerializer(BaseUserRetrieveSerializer):  
     pass
