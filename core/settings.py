@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'admin_auto_filters',
     'django_admin_listfilter_dropdown',
     "debug_toolbar",
+    'django_filters',
     # custom apps
     'users',
     'main',
@@ -151,6 +152,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
@@ -158,9 +160,9 @@ REST_FRAMEWORK = {
 
 # drf_spectacular settings
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'API v 0.1.0',
+    'TITLE': 'API v 0.1.3',
     'DESCRIPTION': 'Тестовое API',
-    'VERSION': '0.1.0',
+    'VERSION': '0.1.3',
     'SERVE_INCLUDE_SCHEMA': False,
     # OTHER SETTINGS
 }
