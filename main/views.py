@@ -8,6 +8,7 @@ from .serializers import (
     PostRetriveSerializer, 
     PostCreateUpdateSerializer, 
     CommentSerializer,
+    ReactionSerializer,
     )
 from .models import Post, Comment
 
@@ -47,3 +48,8 @@ class CommentViewSet(CreateModelMixin, ListModelMixin, DestroyModelMixin, Generi
         if instance.author != self.request.user:
             raise PermissionError("You can't delete this post")
         instance.save()
+
+
+class ReactionViewSet(CreateModelMixin, GenericViewSet):
+    permission_classes = [IsAuthenticatedOrReadOnly,]
+    serializer_class = ReactionSerializer

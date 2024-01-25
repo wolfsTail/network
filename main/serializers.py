@@ -1,4 +1,3 @@
-from email.policy import default
 from rest_framework import serializers
 
 from users.models import User
@@ -24,7 +23,7 @@ class PostListSerializer(serializers.ModelSerializer):
             "created_at",
         ]
 
-    def get_content(self, obj):
+    def get_content(self, obj) -> str:
         max_length = 128
         if len(obj.content) > max_length:
             return obj.content[: max_length - 3] + "..."
@@ -47,7 +46,7 @@ class PostRetriveSerializer(serializers.ModelSerializer):
             "created_at",
         ]
 
-    def get_self_reaction(self, obj):
+    def get_self_reaction(self, obj) -> str:
         reaction = self.context["request"].user.reactions.filter(post=obj).first()
         return reaction
 
@@ -79,3 +78,31 @@ class CommentSerializer(serializers.ModelSerializer):
             "content", 
             "created_at",
             ]
+
+
+class ReactionSerializer(serializers.ModelSerializer):
+    author = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
+    class Meta:
+        model = Reaction
+        fields = [
+            "author", 
+            "post", 
+            "value"
+            ]
+    
+    def create(self, validated_data):
+        reaction = Reaction.objects.filter(
+            post=validated_data["post"],
+            author=validated_data['author'],
+        ).last()
+
+        if not reaction:
+            return Reaction.objects.create(**validated_data)
+        
+        if reaction.value == validated_data["value"]:
+            reaction.value = None
+        else:
+            reaction.value = validated_data["value"]
+        reaction.save()
+        return reaction
