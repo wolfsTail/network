@@ -31,3 +31,41 @@ class MessageListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
         fields = ["chat", "message_author", "text", "created_at"]
+
+
+class ChatListSerializer(serializers.ModelSerializer):
+    companion_name = serializers.SerializerMethodField(label="Имя собеседника")
+    last_message_content = serializers.SerializerMethodField(label="Текст последнего сообщения")
+    last_message_datetime = serializers.DateTimeField(label="Дата и время последнего сообщения")
+
+    class Meta:
+        model = Chat
+        fields = [
+            "companion_name", 
+            "last_message_content", 
+            "last_message_datetime"
+            ]
+    
+    def get_companion_name(self, obj) -> str:
+        companion = obj.user_1 if obj.user_2 == self.context["request"].user else obj.user_2
+        return f"{companion.first_name} {companion.last_name}"
+    
+
+class MessageSerializer(serializers.ModelSerializer):
+    author = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
+    def validate(self, attrs): 
+        chat = attrs["chat"]
+        author = attrs["author"]
+        if chat.user_1 != author and chat.user_2 != author:
+            raise serializers.ValidationError("You are not a part of this chat")
+        return super().validate(attrs)
+    
+    class Meta:
+        model = Message
+        fields = [
+            "chat", 
+            "author", 
+            "text", 
+            "created_at"
+            ]

@@ -160,9 +160,9 @@ REST_FRAMEWORK = {
 
 # drf_spectacular settings
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'API v 0.1.3',
+    'TITLE': 'API v 0.2.0',
     'DESCRIPTION': 'Тестовое API',
-    'VERSION': '0.1.3',
+    'VERSION': '0.2.0',
     'SERVE_INCLUDE_SCHEMA': False,
-    # OTHER SETTINGS
+    # other settings
 }
