@@ -2,7 +2,7 @@ import factory
 from factory.django import DjangoModelFactory
 
 from main.models import Post, Comment, Reaction
-from users.factories import UserTestFactory
+from users.tests.factories import UserTestFactory
 
 
 class PostTestFactory(DjangoModelFactory):

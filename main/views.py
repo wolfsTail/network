@@ -14,7 +14,7 @@ from .models import Post, Comment
 
 
 class PostViewSet(ModelViewSet):
-    queryset = Post.objects.all()
+    queryset = Post.objects.all().order_by("-id")
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_serializer_class(self):

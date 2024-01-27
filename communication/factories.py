@@ -1,7 +1,7 @@
 import factory
 from factory.django import DjangoModelFactory
 
-from users.factories import UserTestFactory
+from users.tests.factories import UserTestFactory
 from communication.models import Chat, Message
 
 

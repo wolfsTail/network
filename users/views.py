@@ -50,7 +50,7 @@ class UserListViewSet(
         return Response(serializer.data)  
 
     @action(detail=True, methods=["get"], url_path="friends")
-    def friends(self, request, pk=None):
+    def friends(self, request, id=None):
         user = self.get_object()
         queryset = self.filter_queryset(
             self.get_queryset().filter(friends=user)
@@ -64,13 +64,13 @@ class UserListViewSet(
         return Response(serializer.data)
     
     @action(detail=True, methods=["post"], url_path="add-friend")
-    def add_friend(self, request, pk=None):
+    def add_friend(self, request, id=None):
         user = self.get_object()
         request.user.friends.add(user)
         return Response("Friend added")
     
     @action(detail=True, methods=["post"], url_path="remove-friend")
-    def remove_friend(self, request, pk=None):
+    def remove_friend(self, request, id=None):
         user = self.get_object()
         request.user.friends.remove(user)
         return Response("Friend removed")
