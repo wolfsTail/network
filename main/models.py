@@ -66,6 +66,6 @@ class Reaction(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.author} react {self.post} at {self.created_at}"
+        return f"{self.author} react {self.post}"
 
 

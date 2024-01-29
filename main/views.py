@@ -1,6 +1,7 @@
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework.mixins import CreateModelMixin, ListModelMixin, DestroyModelMixin
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.exceptions import PermissionDenied
 from django_filters.rest_framework import DjangoFilterBackend
 
 from .serializers import (
@@ -28,13 +29,13 @@ class PostViewSet(ModelViewSet):
     def perform_update(self, serializer):
         instance = self.get_object()
         if instance.author != self.request.user:
-            raise PermissionError("You can't update this post")
+            raise PermissionDenied("You can't update this post")
         serializer.save()
     
     def perform_destroy(self, instance):
         if instance.author != self.request.user:
-            raise PermissionError("You can't delete this post")
-        instance.save()
+            raise PermissionDenied("You can't delete this post")
+        instance.delete()
     
     
 class CommentViewSet(CreateModelMixin, ListModelMixin, DestroyModelMixin, GenericViewSet):
@@ -46,8 +47,8 @@ class CommentViewSet(CreateModelMixin, ListModelMixin, DestroyModelMixin, Generi
 
     def perform_destroy(self, instance):
         if instance.author != self.request.user:
-            raise PermissionError("You can't delete this post")
-        instance.save()
+            raise PermissionDenied("You can't delete this comment")
+        instance.delete()
 
 
 class ReactionViewSet(CreateModelMixin, GenericViewSet):

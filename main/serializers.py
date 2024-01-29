@@ -46,9 +46,9 @@ class PostRetriveSerializer(serializers.ModelSerializer):
             "created_at",
         ]
 
-    def get_self_reaction(self, obj) -> str:
-        reaction = self.context["request"].user.reactions.filter(post=obj).first()
-        return reaction
+    def get_self_reaction(self, obj) -> str:        
+        reaction = self.context["request"].user.reactions.filter(post=obj).last()
+        return reaction.value if reaction else ""
 
 
 class PostCreateUpdateSerializer(serializers.ModelSerializer):
