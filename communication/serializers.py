@@ -46,6 +46,9 @@ class ChatListSerializer(serializers.ModelSerializer):
             "last_message_datetime"
             ]
     
+    def get_last_message_content(self, obj) -> str:
+        return obj.last_message_content
+
     def get_companion_name(self, obj) -> str:
         companion = obj.user_1 if obj.user_2 == self.context["request"].user else obj.user_2
         return f"{companion.first_name} {companion.last_name}"

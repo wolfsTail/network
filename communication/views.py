@@ -19,7 +19,7 @@ class ChatViewset(
     permission_classes = [IsAuthenticated,]
 
     def get_serializer_class(self):
-        if self.cation == "messages":
+        if self.action == "messages":
             return MessageListSerializer
         if self.action == "list":
             return ChatListSerializer
@@ -29,21 +29,23 @@ class ChatViewset(
         user = self.request.user
 
         last_message_subquery = Message.objects.filter(
-            chat=OuterRef("pk")
-        ).order_by("-created_at").values("created_at")[:1]
+            chat=OuterRef('pk')
+        ).order_by('-created_at').values('created_at')[:1]
         last_message_content_subquery = Message.objects.filter(
-            chat=OuterRef("pk")
-        ).order_by("-created_at").values("text")[:1]
+            chat=OuterRef('pk')
+        ).order_by('-created_at').values('text')[:1]
 
-        queryset = Chat.objects.filter(
+        qs = Chat.objects.filter(
             Q(user_1=user) | Q(user_2=user),
             messages__isnull=False,
         ).annotate(
             last_message_datetime=Subquery(last_message_subquery),
             last_message_content=Subquery(last_message_content_subquery),
-        ).selected_related("user_1", "user_2").order_by("-last_message_datetime").distinct()
-
-        return queryset
+        ).select_related(
+            "user_1",
+            "user_2",
+        ).order_by("-last_message_datetime").distinct()
+        return qs
     
     @action(detail=True, methods=["get"], url_path="messages")
     def messages(self, request, pk=None):
